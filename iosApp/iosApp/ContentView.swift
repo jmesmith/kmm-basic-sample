@@ -1,20 +1,24 @@
 import SwiftUI
 import shared
 
+func sum(_ firstNum: String, _ secondNum: String) -> String {
+    let calculator = Calculator()
+
+    if let firstNum = Int32(firstNum), let secondNum = Int32(secondNum) {
+        return String(calculator.sum(a: firstNum, b: secondNum))
+    } else {
+        return "🤔"
+    }
+}
+
 struct ContentView: View {
-    let calculator = Calculator.Companion()
     let greet = Greeting().greeting()
     
     @State private var firstNum: String = "0"
     @State private var secondNum: String = "0"
-    private var sum: String {
-        if let firstNum = Int32(firstNum), let secondNum = Int32(secondNum) {
-            return String(calculator.sum(a: firstNum, b: secondNum))
-        } else {
-            return "🤔"
-        }
-    }
-    
+
+    let timer = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
+
     var body: some View {
         VStack(alignment: .center) {
             Text(greet)
@@ -29,8 +33,11 @@ struct ContentView: View {
                     .multilineTextAlignment(.center)
                     .frame(width: 30)
                 Text("=")
-                Text(sum)
+                Text(sum(firstNum, secondNum))
             }
+        }
+        .onReceive(timer) { _ in
+            firstNum = (firstNum == "0") ? "1" : "0"
         }
     }
 }
